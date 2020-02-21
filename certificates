@@ -1,0 +1,15 @@
+
+#############Generating the Root Certificate###############
+# Create private key for CA
+openssl genrsa -out ca.key 2048
+
+# Create CSR using the private key
+openssl req -new -key ca.key -subj "/CN=cencerto" -out ca.csr
+
+# Self sign the csr using its own private key
+openssl x509 -req -in ca.csr -signkey ca.key -CAcreateserial  -out ca.crt -days 1000
+
+########Generating server certificate #########################
+openssl genrsa -out server.key 2048
+openssl req -new -key server.key -subj "/CN=test.concerto.ai" -out server.csr 
+openssl x509 -req -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial  -out server.crt  -days 1000
